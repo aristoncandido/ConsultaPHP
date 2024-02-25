@@ -1,33 +1,27 @@
 <?php
 
-require_once('conexao.php');
+require_once('conexao.php'); // retorna a conexao $conn
 
-if(isset($_REQUEST['cpf'])) {
-    $cpf = $_REQUEST['cpf'];
-
-    try {
-        // Prepara a instrução SQL para selecionar o cliente com o CPF fornecido
+if(isset($_REQUEST['cpf'])){  //verifica se foi requisitado a variavel global cpf 
+    try{
+        $cpf = $_REQUEST['cpf'];
         $sql = "SELECT * FROM clientes WHERE cpf = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($sql);  //prepara a consulta sql passando a variavel CPF
         $stmt->execute([$cpf]);
 
-
-        // Verifica se o cliente foi encontrado
-        if($stmt->rowCount() > 0) {
-            // Recupera os dados do cliente encontrado
-            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);
-            // Imprime o CPF do cliente
-            echo "CPF encontrado na tabela de clientes: " . $cliente['CPF'];
-            echo "<br>";
-            echo "nome do cliente: " .$cliente['Nome'];
+        if($stmt->rowCount() > 0){  //verifica se tem algum registro na tabela Clientes com esse CPF
+            $cliente = $stmt->fetch(PDO::FETCH_ASSOC);  // retorna um array e é associado na variavel Cliente
+            echo "CPF DO CLIENTE: " . $cliente['CPF'] . "<br>";   // o array tem vários indices como CPF, NOME E TELEFONE 
+            echo "NOME DO CLIENTE: " . $cliente['Nome'] . "<br>";
+            echo "TELEFONE DO CLIENTE: " . $cliente['Telefone'];
         } else {
-            echo "CPF não encontrado na tabela de clientes.";
+            echo "Cliente não cadastrado"; // caso não encontre retorna mensagem para o usuário
         }
     } catch(PDOException $e) {
-        echo "Erro: " . $e->getMessage();
+        echo "Erro: " . $e->getMessage(); // exceção de erro !
     }
 } else {
-    echo "Nenhum CPF fornecido.";
+    echo "CPF não encontrado";
 }
 
 ?>
